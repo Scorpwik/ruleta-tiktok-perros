@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Randomizador de TikToks</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #121212 0%, #1e1e2f 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 450px;
+      width: 100%;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      color: #ff0050;
+      text-shadow: 0 0 10px rgba(255, 0, 80, 0.5);
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      margin: 0 auto 30px auto;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 25px solid #00f2fe;
+      z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 6px solid #00f2fe;
+      background: conic-gradient(
+        #ff0050 0deg 27.6deg,
+        #00f2fe 27.6deg 55.3deg,
+        #ff0050 55.3deg 83deg,
+        #00f2fe 83deg 110.7deg,
+        #ff0050 110.7deg 138.4deg,
+        #00f2fe 138.4deg 166.1deg,
+        #ff0050 166.1deg 193.8deg,
+        #00f2fe 193.8deg 221.5deg,
+        #ff0050 221.5deg 249.2deg,
+        #00f2fe 249.2deg 276.9deg,
+        #ff0050 276.9deg 304.6deg,
+        #00f2fe 304.6deg 332.3deg,
+        #ff0050 332.3deg 360deg
+      );
+      transition: transform 4s cubic-bezier(0.15, 0.99, 0.18, 0.99);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #ff0050, #00f2fe);
+      border: none;
+      color: white;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 0, 80, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result-box {
+      margin-top: 25px;
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .tiktok-link {
+      display: inline-block;
+      padding: 12px 20px;
+      background-color: #25f4ee;
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 10px;
+      word-break: break-all;
+      transition: transform 0.2s;
+    }
+
+    .tiktok-link:hover {
+      transform: scale(1.05);
+      background-color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Randomizador TikTok</h1>
+
+    <div class="wheel-container">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel"></div>
+    </div>
+
+    <button class="btn" id="spin-btn" onclick="spinWheel()">¡Girar Ruleta!</button>
+
+    <div class="result-box" id="result-box">
+      <a href="" id="tiktok-url" class="tiktok-link" target="_blank" rel="noopener noreferrer">Abrir TikTok Seleccionado</a>
+      <button class="btn-secondary" onclick="resetWheel()">Volver a Girar</button>
+    </div>
+  </div>
+
+  <script>
+    const tiktokLinks = [
+      "https://vt.tiktok.com/ZSpPrC14a/",
+      "https://vt.tiktok.com/ZSpPrauFn/",
+      "https://vt.tiktok.com/ZSpPr5GEe/",
+      "https://vt.tiktok.com/ZSpPrP1MB/",
+      "https://vt.tiktok.com/ZSpPr98fH/",
+      "https://vt.tiktok.com/ZSpPrQcJL/",
+      "https://vt.tiktok.com/ZSpPrxYGs/",
+      "https://vt.tiktok.com/ZSpPrpHD3/",
+      "https://vt.tiktok.com/ZSpPrWeHa/",
+      "https://vt.tiktok.com/ZSpPrWP2M/",
+      "https://vt.tiktok.com/ZSpPrsnnh/",
+      "https://vt.tiktok.com/ZSpPh1mka/",
+      "https://vt.tiktok.com/ZSpPhL3qx/"
+    ];
+
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spin-btn');
+    const resultBox = document.getElementById('result-box');
+    const tiktokUrlAnchor = document.getElementById('tiktok-url');
+
+    let currentRotation = 0;
+
+    function spinWheel() {
+      spinBtn.disabled = true;
+      resultBox.style.display = 'none';
+
+      // Elegir enlace al azar
+      const randomIndex = Math.floor(Math.random() * tiktokLinks.length);
+      const selectedLink = tiktokLinks[randomIndex];
+
+      // Calcular grados de giro (mínimo 5 vueltas completas + ángulo aleatorio)
+      const extraDegrees = Math.floor(Math.random() * 360);
+      const totalRotation = currentRotation + (360 * 5) + extraDegrees;
+      currentRotation = totalRotation;
+
+      // Rotar ruleta
+      wheel.style.transform = `rotate(${totalRotation}deg)`;
+
+      // Esperar a que termine la animación (4 segundos)
+      setTimeout(() => {
+        tiktokUrlAnchor.href = selectedLink;
+        resultBox.style.display = 'flex';
+        spinBtn.style.display = 'none';
+      }, 4000);
+    }
+
+    function resetWheel() {
+      resultBox.style.display = 'none';
+      spinBtn.style.display = 'inline-block';
+      spinBtn.disabled = false;
+      spinWheel();
+    }
+  </script>
+</body>
+</html>
